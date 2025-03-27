@@ -80,7 +80,7 @@ class Transactions(models.Model):
         ('returned', 'Returned'),
         ('over_due', 'Overdue')
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES)
 
     class Meta:
         verbose_name = 'Transaction'
