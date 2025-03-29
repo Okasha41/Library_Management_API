@@ -34,19 +34,12 @@ class Transaction(models.Model):
     STATUS_CHOICES = [
         ('checked_out', 'Checked out'),
         ('returned', 'Returned'),
-        ('over_due', 'Overdue')
-    ]
-    TRANSACTION_CHOICES = [
-        ('return', 'Return'),
-        ('check_out', 'Check_out')
+        ('overdue', 'Overdue')
     ]
     book = models.ForeignKey(
         Book, on_delete=models.CASCADE, related_name='transactions')
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='transactions')
-
-    transaction_type = models.CharField(
-        max_length=10, choices=TRANSACTION_CHOICES)
     transaction_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField(null=True, blank=True)
     return_date = models.DateTimeField(null=True, blank=True)
@@ -58,11 +51,10 @@ class Transaction(models.Model):
         verbose_name_plural = 'Transactions'
         ordering = ['-transaction_date']
 
-    def save(self, *args, **kwargs):
-        if self.transaction_type == 'check_out' and not self.due_date:
-            self.due_date = now() + timedelta(days=14)
-
-        super().save(*args, **kwargs)
+    def check_overdue(self):
+        if self.status == 'checked_out' and self.due_date < now():
+            self.status = 'overdue'
+            self.save()
 
     def __str__(self):
         return f'{self.book.title} {self.transaction_type}'
