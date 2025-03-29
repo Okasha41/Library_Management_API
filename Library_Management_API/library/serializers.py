@@ -3,8 +3,6 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now, timedelta
 from .models import Book, Transaction
 
-UserModel = get_user_model()
-
 
 class BooksSerializer(serializers.ModelSerializer):
     class Meta:

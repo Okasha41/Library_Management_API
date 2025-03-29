@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now, timedelta
 
@@ -39,7 +40,7 @@ class Transaction(models.Model):
     book = models.ForeignKey(
         Book, on_delete=models.CASCADE, related_name='transactions')
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='transactions')
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='transactions')
     transaction_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField(null=True, blank=True)
     return_date = models.DateTimeField(null=True, blank=True)

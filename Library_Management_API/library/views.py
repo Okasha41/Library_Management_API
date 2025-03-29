@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+
+class UserViewSet(ModelViewSet):
+    pass
+
+
+class BooksViewSet(ModelViewSet):
+    pass
+
+
+class TransactionViewSet(ModelViewSet):
+    pass
