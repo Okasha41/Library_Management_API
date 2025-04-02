@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
@@ -7,8 +7,9 @@ from .serializers import BooksSerializer, TransactionCheckOutSerializer, Transac
 from .models import Book, CustomUser, Transaction
 
 
-class UserViewSet(ModelViewSet):
-    pass
+class UserViewSet(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserRegisterSerializer
 
 
 class BooksViewSet(ModelViewSet):
