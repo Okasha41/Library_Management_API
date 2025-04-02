@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils.timezone import now, timedelta
 from .models import Book, Transaction
 
+
 UserModel = settings.AUTH_USER_MODEL
 
 
@@ -116,3 +117,10 @@ class TransactionReturnSerializer(serializers.ModelSerializer):
         book.save()
 
         return transaction
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['id', 'book', 'user', 'transaction_type',
+                  'transaction_date', 'due_date', 'return_date', 'status']
