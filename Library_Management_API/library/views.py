@@ -57,7 +57,7 @@ class TransactionViewSet(ModelViewSet):
         if self.action == 'checkout_book':
             return TransactionCheckOutSerializer
         elif self.action == 'return_book':
-            return TransactionCheckOutSerializer
+            return TransactionReturnSerializer
         else:
             return TransactionSerializer
 
@@ -66,14 +66,14 @@ class TransactionViewSet(ModelViewSet):
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def checkout_book(self, request):
-        serializer = TransactionCheckOutSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def return_book(self, request):
-        serializer = TransactionReturnSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -44,7 +44,6 @@ class TransactionCheckOutSerializer(serializers.ModelSerializer):
                             'transaction_date', 'status']
 
     def create(self, validated_data):
-        print(self.context)
         user = self.context['request'].user
         book = validated_data.get('book')
 
@@ -88,10 +87,10 @@ class TransactionReturnSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['id', 'book', 'user', 'transaction_type',
+        fields = ['id', 'book', 'user',
                   'transaction_date', 'due_date', 'return_date', 'status']
         read_only_fields = ['id', 'user',
-                            'transaction_date', 'transaction_type', 'status', 'return_date', 'due_date']
+                            'transaction_date', 'status', 'return_date', 'due_date']
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -127,5 +126,5 @@ class TransactionReturnSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['id', 'book', 'user', 'transaction_type',
+        fields = ['id', 'book', 'user',
                   'transaction_date', 'due_date', 'return_date', 'status']
