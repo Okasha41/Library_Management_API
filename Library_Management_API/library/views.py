@@ -1,15 +1,40 @@
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from .serializers import BooksSerializer, TransactionCheckOutSerializer, TransactionReturnSerializer, UserRegisterSerializer, TransactionSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import BooksSerializer, TransactionCheckOutSerializer, TransactionReturnSerializer, RegisterSerializer, TransactionSerializer
 from .models import Book, CustomUser, Transaction
 
 
-class UserViewSet(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserRegisterSerializer
+class RegisterView(APIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({"message": "This endpoint supports POST requests for user registration."})
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class BooksViewSet(ModelViewSet):

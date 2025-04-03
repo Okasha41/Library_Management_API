@@ -1,22 +1,26 @@
 from rest_framework import serializers
-from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.utils.timezone import now, timedelta
 from .models import Book, Transaction
 
 
-UserModel = settings.AUTH_USER_MODEL
+UserModel = get_user_model()
 
 
-class UserRegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
         model = UserModel
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'username', 'email',
+                  'password', 'first_name', 'last_name']
 
     def create(self, validated_data):
+        password = validated_data.pop('password')
         user = UserModel.objects.create_user(**validated_data)
+        user.set_password(password)
+        user.save()
         return user
 
 
