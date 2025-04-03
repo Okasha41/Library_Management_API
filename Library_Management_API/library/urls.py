@@ -12,8 +12,8 @@ router.register('transactions', views.TransactionViewSet,
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('login/', TokenObtainPairView.as_view(), name='login'),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('refresh/', TokenRefreshView.as_view(), name='refresh'),
-    path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('users/login/', TokenObtainPairView.as_view(), name='login'),
+    path('users/register/', views.RegisterView.as_view(), name='register'),
+    path('users/refresh/', TokenRefreshView.as_view(), name='refresh'),
+    path('users/logout/', views.LogoutView.as_view(), name='logout'),
 ]

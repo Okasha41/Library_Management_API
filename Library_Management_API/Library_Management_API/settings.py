@@ -150,4 +150,5 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     # Accept 'Bearer' prefix for tokens
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }

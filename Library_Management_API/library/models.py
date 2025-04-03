@@ -4,6 +4,21 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now, timedelta
 
 
+class CustomUser(AbstractUser):
+
+    email = models.EmailField(unique=True)
+
+    date_of_membership = models.DateTimeField(auto_now_add=True)
+
+    active_status = models.BooleanField(default=True)
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    def __str__(self):
+        return self.username
+
+
 class Book(models.Model):
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
@@ -14,21 +29,6 @@ class Book(models.Model):
 
     def __str__(self):
         return f'{self.title} by {self.author}'
-
-
-class CustomUser(AbstractUser):
-
-    email = models.EmailField(unique=True)
-
-    date_of_membership = models.DateTimeField(auto_now_add=True)
-
-    active_status = models.BooleanField(default=True)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    def __str__(self):
-        return self.email
 
 
 class Transaction(models.Model):

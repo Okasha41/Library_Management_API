@@ -1,12 +1,13 @@
-from rest_framework import status, generics
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 from .serializers import BooksSerializer, TransactionCheckOutSerializer, TransactionReturnSerializer, RegisterSerializer, TransactionSerializer
-from .models import Book, CustomUser, Transaction
+from .models import Book, Transaction
 
 
 class RegisterView(APIView):
@@ -20,21 +21,27 @@ class RegisterView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
-            refresh_token = request.data["refresh"]
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
+
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
+            return Response({"message": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+
+        except TokenError:
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BooksViewSet(ModelViewSet):
@@ -69,11 +76,11 @@ class TransactionViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Book checked out successfully'}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def return_book(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Book returned successfully'}, status=status.HTTP_200_OK)
