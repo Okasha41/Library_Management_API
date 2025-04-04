@@ -95,8 +95,8 @@ class TransactionReturnSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         book = validated_data.get('book')
-        transaction = Transaction.objects.filter(
-            user=user, book=book, status__in=['checked_out', 'overdue']).first()
+        transaction = Transaction.objects.get(
+            user=user, book=book, status='checked_out')
 
         # check if there is a record for this book being checked out
         if not transaction:
