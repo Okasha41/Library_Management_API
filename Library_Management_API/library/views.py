@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.decorators import action
@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import BooksSerializer, TransactionCheckOutSerializer, TransactionReturnSerializer, RegisterSerializer, TransactionSerializer
 from .models import Book, Transaction
 
@@ -48,10 +49,38 @@ class BooksViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BooksSerializer
 
+    # Add ordering and search filters
+    filter_backends = [DjangoFilterBackend,
+                       filters.OrderingFilter,
+                       filters.SearchFilter]
+    filterset_fields = ['balance']  # Direct filtering by field value
+    ordering_fields = ['title', 'author', 'balance', 'total_copies']
+    search_fields = ['title', 'author', 'isbn']
+
     def get_permissions(self):
         if self.request.method in ['GET', 'HEAD', 'OPTIONS']:
             return [AllowAny()]
         return [IsAdminUser()]
+
+    def get_queryset(self):
+        queryset = Book.objects.filter(balance__gt=0)  # Only available books
+
+        # Retrieve query params
+        title = self.request.query_params.get('title')
+        author = self.request.query_params.get('author')
+        isbn = self.request.query_params.get('isbn')
+
+        # Apply filters if they are provided
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+
+        if author:
+            queryset = queryset.filter(author__icontains=author)
+
+        if isbn:
+            queryset = queryset.filter(isbn=isbn)
+
+        return queryset
 
 
 class TransactionViewSet(ModelViewSet):
