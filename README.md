@@ -115,6 +115,8 @@ url : GET /library/books/
 "results": [...]
 }
 
+---
+
 2- Add new book to library [Permission : Admin only]
 
 url : POST /library/books/
@@ -147,6 +149,8 @@ request body:
 "total_copies": 3,
 "balance": 3
 }
+
+---
 
 3- Update/Detete a book from library [Permission : Admin only]
 url : PATCH/DELETE /library/books/<int:book_id>
@@ -201,6 +205,8 @@ Bearer token: "..."
 ]
 }
 
+---
+
 2- Check out a book [Permission : Authenticated only]
 
 url : POST /library/transactions/checkout_book/
@@ -226,6 +232,8 @@ request body:
 [
 "There are no available copies of the required book"
 ]
+
+---
 
 3- Return a book [Permission : Authenticated only]
 
