@@ -18,7 +18,7 @@ request body :
 "last_name" : "b"
 }
 
-Response if username or email already exsits:
+\*\* response if username or email already exsits:
 {
 "username": [
 "A user with that username already exists."
@@ -28,7 +28,7 @@ Response if username or email already exsits:
 ]
 }
 
-Response if data is valid:
+\*\* response if data is valid:
 {
 "message": "User registered successfully."
 }
@@ -45,13 +45,13 @@ request body :
 "password": "123456789"
 }
 
-response if login is successful:
+\*\* response if login is successful:
 {
 "refresh": "...",
 "access": "..."
 }
 
-response if login failed:
+\*\* response if login failed:
 {
 "detail": "No active account found with the given credentials"
 }
@@ -69,13 +69,13 @@ request body:
 "refresh": "..."
 }
 
-response if the given refresh token is valid:
+\*\* response if the given refresh token is valid:
 {
 "access": "...",
 "refresh": "..."
 }
 
-response if the given refresh token in not valid:
+\*\* response if the given refresh token in not valid:
 {
 "detail": "Token is invalid",
 "code": "token_not_valid"
@@ -93,7 +93,7 @@ request body:
 "refresh": "..."
 }
 
-response:
+\*\* response:
 {
 "message": "Successfully logged out."
 }
@@ -105,7 +105,7 @@ response:
 
 url : GET /library/books/
 
-response :
+\*\* response :
 {
 "total_count": 3,
 "total_pages": 1,
@@ -130,14 +130,14 @@ request body:
 "balance": 3
 }
 
-response if book with same isbn exists:
+\*\* response if book with same isbn exists:
 {
 "isbn": [
 "book with this isbn already exists."
 ]
 }
 
-response in case add book successfully:
+\*\* response in case add book successfully:
 {
 "id": 5,
 "title": "Python",
@@ -162,7 +162,7 @@ request body:
 "balance": 3
 }
 
-response if update is successful:
+\*\* response if update is successful:
 {
 "title": "Python",
 "author": "Okasha1",
@@ -175,13 +175,13 @@ response if update is successful:
 ---------------------- Transactions Management Endpoints ------------------------
 #################################################################################
 
-1- List all transactions of current logged in user
+1- List all transactions of current logged in user [Permission : Authenticated only]
 
 url : POST /library/transactions/
 
 Bearer token: "..."
 
-response:
+\*\* response:
 {
 "total_count": 1,
 "total_pages": 1,
@@ -212,4 +212,37 @@ request body:
 "due_date": 2025-04-20 # if not provided will be considered after 14 days of check out date
 }
 
-response in case check out is successfull:
+\*\* response in case check out is successfull:
+{
+"message": "Book checked out successfully"
+}
+
+\*\* response in case this book is already checked out before:
+[
+"You have already checked out this book"
+]
+
+\*\* response in case there is no available copies for the book required:
+[
+"There are no available copies of the required book"
+]
+
+3- Return a book [Permission : Authenticated only]
+
+url : /library/transactions/return_book/
+
+Bearer token: "..."
+request body:
+{
+"book":1
+}
+
+\*\* response in case the return is successful:
+{
+"message": "Book returned successfully"
+}
+
+\*\* response in case the return failed:
+[
+"There is not log for checking out this book"
+]
